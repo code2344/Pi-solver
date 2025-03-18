@@ -26,33 +26,36 @@
     <h2>Pi Approximation</h2>
     <div id="output"></div>
     <script>
-        function findBetterPiApproximation(limit) {
-            let bestNumerator = 22;
-            let bestDenominator = 7;
-            let bestError = Math.abs((bestNumerator / bestDenominator) - Math.PI);
-            let outputDiv = document.getElementById("output");
-            let results = [];
+        let bestNumerator = 22;
+        let bestDenominator = 7;
+        let bestError = Math.abs((bestNumerator / bestDenominator) - Math.PI);
+        let outputDiv = document.getElementById("output");
+        let results = [];
+        let denominator = 1;
+        
+        function findBetterPiApproximation() {
+            let numerator = Math.round(denominator * Math.PI);
+            let approx = numerator / denominator;
+            let error = Math.abs(approx - Math.PI);
+            let entry = `${numerator}/${denominator} = ${approx} (Error: ${error})`;
             
-            for (let denominator = 1; denominator <= limit; denominator++) {
-                let numerator = Math.round(denominator * Math.PI);
-                let approx = numerator / denominator;
-                let error = Math.abs(approx - Math.PI);
-                let entry = `${numerator}/${denominator} = ${approx} (Error: ${error})`;
-                
-                if (error < bestError) {
-                    bestNumerator = numerator;
-                    bestDenominator = denominator;
-                    bestError = error;
-                    results.unshift(`<span class='correct'>✔ ${entry}</span>`);
-                } else {
-                    results.push(`<span class='incorrect'>✘ ${entry}</span>`);
-                }
-                
-                outputDiv.innerHTML = results.join("<br>");
+            if (error < bestError) {
+                bestNumerator = numerator;
+                bestDenominator = denominator;
+                bestError = error;
+                results.unshift(`<span class='correct'>✔ ${entry}</span>`);
+            } else {
+                results.push(`<span class='incorrect'>✘ ${entry}</span>`);
             }
+            
+            outputDiv.innerHTML = results.join("<br>");
+            outputDiv.scrollTop = outputDiv.scrollHeight;
+            
+            denominator++;
+            setTimeout(findBetterPiApproximation, 1);
         }
         
-        findBetterPiApproximation(1000);
+        findBetterPiApproximation();
     </script>
 </body>
 </html>

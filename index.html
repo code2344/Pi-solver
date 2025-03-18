@@ -52,10 +52,28 @@
             outputDiv.scrollTop = outputDiv.scrollHeight;
             
             denominator++;
-            setTimeout(findBetterPiApproximation, 1);
+            setTimeout(findBetterPiApproximation, 0.1);
         }
         
         findBetterPiApproximation();
+    </script>
+    <script>
+      var noSleep = new NoSleep();
+
+      var wakeLockEnabled = true;
+      var toggleEl = document.querySelector("#toggle");
+      var description = document.getElementById("description");
+      var title = document.getElementById("title");
+      var svgpath = document.getElementById("svgpath");
+      toggleEl.addEventListener('click', function() {
+        if (!wakeLockEnabled) {
+          noSleep.enable(); // keep the scre
+          wakeLockEnabled = true;
+        } else {
+          noSleep.disable(); // let the screen turn off.
+          wakeLockEnabled = false;
+        }
+      }, false);
     </script>
 </body>
 </html>

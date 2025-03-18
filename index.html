@@ -41,18 +41,21 @@
         let outputDiv = document.getElementById("output");
         let results = [];
         let denominator = 1;
-        let count = 1;
-        
+        let count = 0; // Start count at 0 or 1 depending on your preference
+
         function findBetterPiApproximation() {
-            count = count + 1;  // Increment global count
+            count++;  // Increment the global count for each iteration
+
             let numerator = Math.round(denominator * Math.PI);
             let approx = numerator / denominator;
             let error = Math.abs(approx - Math.PI);
+
             let entry = `<div class="entry">
                             <span>${numerator}/${denominator} = ${approx} (Error: ${error})</span>
                             <span class='count'>(${count})</span>
                           </div>`;
             
+            // Determine if the current approximation is better
             if (error < bestError) {
                 bestNumerator = numerator;
                 bestDenominator = denominator;
@@ -62,11 +65,12 @@
                 results.push(`<span class='incorrect'>✘ ${entry}</span>`);
             }
             
+            // Update the output
             outputDiv.innerHTML = results.join("<br>");
             outputDiv.scrollTop = outputDiv.scrollHeight;
             
-            denominator++;
-            setTimeout(findBetterPiApproximation, 0);
+            denominator++;  // Increment denominator for next approximation
+            setTimeout(findBetterPiApproximation, 0);  // Continue next approximation
         }
         
         findBetterPiApproximation();

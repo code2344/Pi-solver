@@ -13,12 +13,13 @@
         }
         .correct { color: lime; }
         .incorrect { color: red; }
-        #output {
+        #output, #best-output {
             white-space: pre-line;
             max-height: 400px;
             overflow-y: auto;
             border: 1px solid white;
             padding: 10px;
+            margin-bottom: 10px;
         }
         .entry {
             display: flex;
@@ -27,86 +28,83 @@
         }
         .entry .count {
             text-align: right;
-            width: 50px; /* Adjust this width as needed */
+            width: 50px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 5px 10px;
+            background: lime;
+            color: black;
+            border: none;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <h2>Pi Approximation</h2>
     <div id="output"></div>
+    <h3>Best Approximation So Far</h3>
+    <div id="best-output"></div>
+    <button onclick="downloadResults()">Download Output</button>
+    
     <script>
         let bestNumerator = 22;
         let bestDenominator = 7;
         let bestError = Math.abs((bestNumerator / bestDenominator) - Math.PI);
         let outputDiv = document.getElementById("output");
+        let bestOutputDiv = document.getElementById("best-output");
         let results = [];
         let denominator = 1;
-        let count = 0; // Start count at 0 or 1 depending on your preference
+        let piString = Math.PI.toFixed(50).toString(); // First 50 digits of Pi
+
+        function colorizeDigits(approx) {
+            let approxStr = approx.toFixed(50).toString();
+            let colored = "";
+            for (let i = 0; i < piString.length; i++) {
+                if (approxStr[i] === piString[i]) {
+                    colored += `<span class='correct'>${approxStr[i]}</span>`;
+                } else {
+                    colored += `<span class='incorrect'>${approxStr[i]}</span>`;
+                }
+            }
+            return colored;
+        }
 
         function findBetterPiApproximation() {
-            count++;  // Increment the global count for each iteration
-
             let numerator = Math.round(denominator * Math.PI);
             let approx = numerator / denominator;
             let error = Math.abs(approx - Math.PI);
 
-            let entry = `<div class="entry">
-                            <span>${numerator}/${denominator} = ${approx} (Error: ${error})</span>
-                          </div>`;
+            let coloredApprox = colorizeDigits(approx);
+            let entry = `<div class="entry">${numerator}/${denominator} ≈ ${coloredApprox} (Error: ${error})</div>`;
             
-            // Determine if the current approximation is better
             if (error < bestError) {
                 bestNumerator = numerator;
                 bestDenominator = denominator;
                 bestError = error;
                 results.unshift(`<span class='correct'>✔ ${entry}</span>`);
+                bestOutputDiv.innerHTML = `<div class='entry'><strong>Best:</strong> ${entry}</div>`;
             } else {
                 results.push(`<span class='incorrect'>✘ ${entry}</span>`);
             }
             
-            // Update the output
             outputDiv.innerHTML = results.join("<br>");
             outputDiv.scrollTop = outputDiv.scrollHeight;
             
-            denominator++;  // Increment denominator for next approximation
-            setTimeout(findBetterPiApproximation, 0);  // Continue next approximation
+            denominator++;
+            requestAnimationFrame(findBetterPiApproximation);
         }
-        
+
+        function downloadResults() {
+            let text = results.join("\n").replace(/<[^>]*>/g, "");
+            let blob = new Blob([text], { type: "text/plain" });
+            let a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "pi_approximations.txt";
+            a.click();
+        }
+
         findBetterPiApproximation();
     </script>
-    <script>
-    const canWakeLock = () => 'wakeLock' in navigator;
-    let wakelock;
-    
-    async function lockWakeState() {
-        if(!canWakeLock()) return;
-        try {
-            wakelock = await navigator.wakeLock.request();
-            wakelock.addEventListener('release', () => {
-                console.log('Screen Wake State Locked:', !wakelock.released);
-            });
-            console.log('Screen Wake State Locked:', !wakelock.released);
-        } catch(e) {
-            console.error('Failed to lock wake state with reason:', e.message);
-        }
-    }
-    
-    // Wrap the call to lockWakeState inside an async function
-    (async function() {
-        await lockWakeState();
-    })();
-    </script>
-    <div class="container">
-      <div class="vertical-center">
-        <label class="switch">
-          <input type="checkbox" id="toggle">
-          <span class="slider round"></span>
-        </label>
-      
-        <h1 id="title">Keep Screen On</h1>
-        <p id="description">Turn on the toggle above and prevent your device from sleeping.</p>
-        <script src="NoSleep.min.js"></script>      
-      </div>
-    </div>
 </body>
 </html>

@@ -20,6 +20,15 @@
             border: 1px solid white;
             padding: 10px;
         }
+        .entry {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .entry .count {
+            text-align: right;
+            width: 50px; /* Adjust this width as needed */
+        }
     </style>
 </head>
 <body>
@@ -39,7 +48,10 @@
             let numerator = Math.round(denominator * Math.PI);
             let approx = numerator / denominator;
             let error = Math.abs(approx - Math.PI);
-            let entry = `${numerator}/${denominator} = ${approx} (Error: ${error}) (${count})`;
+            let entry = `<div class="entry">
+                            <span>${numerator}/${denominator} = ${approx} (Error: ${error})</span>
+                            <span class='count'>(${count})</span>
+                          </div>`;
             
             if (error < bestError) {
                 bestNumerator = numerator;

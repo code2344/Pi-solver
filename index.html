@@ -92,7 +92,7 @@
             outputDiv.scrollTop = outputDiv.scrollHeight;
             
             denominator++;
-            requestAnimationFrame(findBetterPiApproximation);
+            setTimeout(findBetterPiApproximation, 0);
         }
 
         function downloadResults() {

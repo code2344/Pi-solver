@@ -58,22 +58,21 @@
         findBetterPiApproximation();
     </script>
     <script>
-      var noSleep = new NoSleep();
-
-      var wakeLockEnabled = true;
-      var toggleEl = document.querySelector("#toggle");
-      var description = document.getElementById("description");
-      var title = document.getElementById("title");
-      var svgpath = document.getElementById("svgpath");
-      toggleEl.addEventListener('click', function() {
-        if (!wakeLockEnabled) {
-          noSleep.enable(); // keep the scre
-          wakeLockEnabled = true;
-        } else {
-          noSleep.disable(); // let the screen turn off.
-          wakeLockEnabled = false;
-        }
-      }, false);
+    const canWakeLock = () => 'wakeLock' in navigator;
+    let wakelock;
+    async function lockWakeState() {
+      if(!canWakeLock()) return;
+      try {
+        wakelock = await navigator.wakeLock.request();
+        wakelock.addEventListener('release', () => {
+          console.log('Screen Wake State Locked:', !wakelock.released);
+        });
+        console.log('Screen Wake State Locked:', !wakelock.released);
+      } catch(e) {
+        console.error('Failed to lock wake state with reason:', e.message);
+      }
+    }
+    await lockWakeState();
     </script>
 </body>
 </html>

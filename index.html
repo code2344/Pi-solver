@@ -32,12 +32,14 @@
         let outputDiv = document.getElementById("output");
         let results = [];
         let denominator = 1;
+        let count = 0;
         
         function findBetterPiApproximation() {
+            let count += 1
             let numerator = Math.round(denominator * Math.PI);
             let approx = numerator / denominator;
             let error = Math.abs(approx - Math.PI);
-            let entry = `${numerator}/${denominator} = ${approx} (Error: ${error})`;
+            let entry = `${numerator}/${denominator} = ${approx} (Error: ${error}) (${count})`;
             
             if (error < bestError) {
                 bestNumerator = numerator;
